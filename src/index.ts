@@ -9,8 +9,19 @@
  */
 import { z } from "zod";
 
-export const dispositionSchema = z.enum(["ok", "prune", "repair", "review"]);
-export type Disposition = z.infer<typeof dispositionSchema>;
+/** The label actor's verdict for a work unit. */
+export type Disposition = "ok" | "prune" | "repair" | "review";
+
+// Internal validator. Kept private so no zod type reaches the public API —
+// zod's types are transitively "slow" for JSR's fast-check, so exposing any of
+// them would forfeit fast-types. The explicit `Disposition` union + the
+// `parseDisposition` boundary give callers full type safety AND fast-types.
+const dispositionSchema = z.enum(["ok", "prune", "repair", "review"]);
+
+/** Validate an unknown value as a {@link Disposition}; throws if it isn't one. */
+export function parseDisposition(value: unknown): Disposition {
+  return dispositionSchema.parse(value);
+}
 
 /**
  * Input contract for the classifier — the minimal surface state it labels.
@@ -46,6 +57,7 @@ function localOperatorStateClean(local: ClassifyInput["local"]): boolean {
   return staged === 0 && unstaged === 0 && untracked === 0 && conflicts === 0;
 }
 
+/** Classify a work unit's surface state into a {@link Disposition} — a pure decision table (ok/prune/repair/review). */
 export function classify(input: ClassifyInput): Disposition {
   const { status, issueFeatureEnabled, issueStatus, artifacts, local } = input;
 
