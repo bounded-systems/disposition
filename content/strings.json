@@ -5,6 +5,10 @@
   },
   "description": {
     "type": "meta",
-    "value": "Pure classifier mapping work-unit surface state to a disposition (ok/prune/repair/review)"
+    "value": "A pure classifier that maps a work unit's surface state to a disposition: ok, prune, repair, or review.  Given the observable state of a work unit (its PR, branch, checks, …), this answers a single question — what should happen to it next?  — as a total, side-effect-free funct…"
+  },
+  "keywords": {
+    "type": "body",
+    "value": "DISPOSITION · CLASSIFIER · WORK-UNIT · STATE · ZOD"
   }
 }
